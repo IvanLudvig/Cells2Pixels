@@ -35,15 +35,8 @@ class IsoNCA(torch.nn.Module):
         self.device = device
         self.precision = precision
 
-        self.w1 = torch.nn.Conv2d(
-            channels * self.perception_kernels,
-            fc_dim,
-            1,
-            bias=True,
-            device=device,
-            dtype=precision,
-        )
-        self.w2 = torch.nn.Conv2d(fc_dim, channels, 1, bias=False, device=device, dtype=precision)
+        self.w1 = torch.nn.Conv2d(channels * self.perception_kernels, fc_dim, 1, bias=True, device=device)
+        self.w2 = torch.nn.Conv2d(fc_dim, channels, 1, bias=False, device=device)
 
         torch.nn.init.xavier_normal_(self.w1.weight, gain=0.2)
         torch.nn.init.zeros_(self.w2.weight)
