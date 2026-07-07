@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 from losses.loss import Loss
 from models.nca2d import GrowingNCA
+from models.isonca import IsoGrowingNCA
 from models.siren import Siren
 from training.common import (
     TestOptions,
@@ -25,12 +26,19 @@ from utils.render import Renderer2D
 from utils.video import VideoWriter
 
 
+GROWING_NCA_TYPES = {
+    "GrowingNCA": GrowingNCA,
+    "IsoGrowingNCA": IsoGrowingNCA,
+}
+
+
 class Growing2DTask(BaseTask):
     def _build(self, load: bool = False):
         precision = precision_from_config(self.config)
         nca_kwargs = device_config(self.config["nca"]["nca_kwargs"], self.device)
         nca_kwargs["precision"] = precision
-        model = GrowingNCA(**nca_kwargs).to(self.device)
+        nca_type = self.config["nca"].get("type", "GrowingNCA")
+        model = GROWING_NCA_TYPES[nca_type](**nca_kwargs).to(self.device)
         nca_output_dim = model.channels
         if self.config["nca"]["output_type"] == "z":
             nca_output_dim *= model.perception_kernels
@@ -49,7 +57,7 @@ class Growing2DTask(BaseTask):
     def train(self) -> None:
         set_seed(self.config.get("seed", 43))
         model, siren, precision = self._build()
-        self._log_counts(model, siren, "GrowingNCA")
+        self._log_counts(model, siren, self.config["nca"].get("type", "GrowingNCA"))
         rep_start = load_graft_if_configured(self.config, "nca", model, siren, self.device)
         with torch.no_grad():
             loss_fn, renderer, grid_size = self._loss_renderer_grid()
