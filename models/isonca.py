@@ -116,7 +116,7 @@ class IsoGrowingNCA(IsoNCA):
         super().__init__(channels, fc_dim, **kwargs)
 
         torch.nn.init.xavier_normal_(self.w1.weight, gain=0.1)
-        torch.nn.init.xavier_normal_(self.w2.weight, gain=0.1)
+        torch.nn.init.zeros_(self.w2.weight)
 
     def forward(self, s, dx=1.0, dy=1.0, dt=1.0, integrator='euler'):
         pre_life_mask = self.get_living_mask(s)
