@@ -5,9 +5,9 @@ import numpy as np
 class Loss(torch.nn.Module):
     def __init__(self, appearance_loss_weight=0.0, overflow_loss_weight=0.0,
                  clip_loss_weight=0.0, motion_loss_weight=0.0,
-                 image_loss_weight=0.0, rf_loss_weight=0.0, voxel_loss_weight=0.0,
+                 image_loss_weight=0.0, invariant_image_loss_weight=0.0, rf_loss_weight=0.0, voxel_loss_weight=0.0,
                  appearance_loss_kwargs=None, motion_loss_kwargs=None,
-                 image_loss_kwargs=None, rf_loss_kwargs=None, voxel_loss_kwargs=None,
+                 image_loss_kwargs=None, invariant_image_loss_kwargs=None, rf_loss_kwargs=None, voxel_loss_kwargs=None,
                  device='cuda:0'):
         super(Loss, self).__init__()
 
@@ -17,12 +17,14 @@ class Loss(torch.nn.Module):
         self.motion_loss_weight = motion_loss_weight
         self.overflow_loss_weight = overflow_loss_weight
         self.image_loss_weight = image_loss_weight
+        self.invariant_image_loss_weight = invariant_image_loss_weight
         self.rf_loss_weight = rf_loss_weight
         self.voxel_loss_weight = voxel_loss_weight
 
         self.appearance_loss_kwargs = {} if appearance_loss_kwargs is None else appearance_loss_kwargs
         self.motion_loss_kwargs = {} if motion_loss_kwargs is None else motion_loss_kwargs
         self.image_loss_kwargs = {} if image_loss_kwargs is None else image_loss_kwargs
+        self.invariant_image_loss_kwargs = {} if invariant_image_loss_kwargs is None else invariant_image_loss_kwargs
         self.rf_loss_kwargs = {} if rf_loss_kwargs is None else rf_loss_kwargs
         self.voxel_loss_kwargs = {} if voxel_loss_kwargs is None else voxel_loss_kwargs
 
@@ -56,6 +58,13 @@ class Loss(torch.nn.Module):
             from losses.image_loss import ImageLoss
             self.loss_mapper['image'] = ImageLoss(**self._kwargs_with_device(self.image_loss_kwargs))
             self.loss_weights['image'] = self.image_loss_weight
+
+        if self.invariant_image_loss_weight != 0:
+            from losses.invariant_image_loss import InvariantImageLoss
+            self.loss_mapper['invariant_image'] = InvariantImageLoss(
+                **self._kwargs_with_device(self.invariant_image_loss_kwargs)
+            )
+            self.loss_weights['invariant_image'] = self.invariant_image_loss_weight
 
         if self.rf_loss_weight != 0:
             from losses.rf_loss import RadianceFieldLoss
