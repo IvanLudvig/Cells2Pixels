@@ -304,7 +304,8 @@ class GradNormIsoGrowingNCA(torch.nn.Module):
         grad = depthwise_conv(s, self.grad_filters, self.padding)
         gx, gy = grad[:, ::2], grad[:, 1::2]
         state_lap = depthwise_conv(s, self.lap_filter, self.padding)
-        grad_norm = (gx * gx + gy * gy + 1e-8).sqrt()
+        eps = max(1e-8, torch.finfo(gx.dtype).eps)
+        grad_norm = (gx * gx + gy * gy + eps).sqrt()
         return torch.cat([s, state_lap, grad_norm], dim=1)
 
     def adaptation(self, s):
