@@ -25,6 +25,7 @@ class InvariantImageLoss(torch.nn.Module):
             mirror=True,
             sharpen=True,
             l2_weight=1.0,
+            include_nca_alpha=False,
             device='cuda:0',
     ):
         super().__init__()
@@ -43,6 +44,7 @@ class InvariantImageLoss(torch.nn.Module):
         self.mirror = mirror
         self.sharpen = sharpen
         self.l2_weight = l2_weight
+        self.include_nca_alpha = include_nca_alpha
         self.device = device
         self.grid_size = (image_size[0] + 2 * padding[0], image_size[1] + 2 * padding[1])
 
@@ -72,6 +74,10 @@ class InvariantImageLoss(torch.nn.Module):
 
     def _build_polar_target(self):
         target = self.target_image
+        if getattr(self, "include_nca_alpha", False):
+            # Keep morphology and appearance on one shared invariant alignment.
+            target = torch.cat([target, target[:, 3:4]], dim=1)
+        self.loss_channel_n = target.shape[1]
         w = target.shape[-1]
         r = torch.linspace(0.5 / w, 1, w // 2, device=target.device, dtype=target.dtype)[:, None]
         angle = torch.arange(0, w * torch.pi + 1, device=target.device, dtype=target.dtype) / (w / 2)
@@ -87,7 +93,7 @@ class InvariantImageLoss(torch.nn.Module):
         self.register_buffer("polar_target_sqnorm", polar_target.square().sum(-1, keepdim=True))
 
     def calc_losses(self, batch: torch.Tensor, extra_outputs=False):
-        batch = batch[:, :self.channel_n].to(self.device)
+        batch = batch[:, :self.loss_channel_n].to(self.device)
         if self.sharpen:
             batch = sharpen_filter(batch)
         polar_batch = torch.nn.functional.grid_sample(
@@ -109,7 +115,16 @@ class InvariantImageLoss(torch.nn.Module):
 
     def forward(self, input_dict, return_summary=True):
         generated = input_dict['generated_images']
-        losses = self.calc_losses(generated)
+        loss_input = generated
+        if self.include_nca_alpha:
+            if 'alpha' not in input_dict:
+                raise KeyError("InvariantImageLoss with include_nca_alpha=True requires input_dict['alpha']")
+            nca_alpha = input_dict['alpha'].to(device=generated.device, dtype=generated.dtype)
+            if nca_alpha.shape[-2:] != generated.shape[-2:]:
+                raise ValueError("NCA alpha and generated images must have the same spatial dimensions")
+            loss_input = torch.cat([generated[:, :self.channel_n], nca_alpha], dim=1)
+
+        losses = self.calc_losses(loss_input)
         invariant_l2 = losses.min(-1)[0].mean()
         loss = invariant_l2 * self.l2_weight
         loss_log = {"Invariant L2": invariant_l2}
