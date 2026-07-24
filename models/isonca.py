@@ -313,14 +313,29 @@ class GradNormIsoGrowingNCA(torch.nn.Module):
         delta_s = self.w2(torch.relu(self.w1(z)))
         return delta_s, z
 
-    def forward(self, s, dx=1.0, dy=1.0, dt=1.0, integrator='euler'):
+    def forward(
+            self,
+            s,
+            dx=1.0,
+            dy=1.0,
+            dt=1.0,
+            integrator='euler',
+            update_mask=None,
+    ):
         del dx, dy
         if integrator != 'euler':
             raise ValueError("GradNormIsoGrowingNCA matches the blogpost Euler update only")
 
         alive = self.get_living_mask(s)
         delta_s, z = self.adaptation(s)
-        if self.update_prob < 1.0:
+        if update_mask is not None:
+            expected_shape = (s.shape[0], 1, s.shape[2], s.shape[3])
+            if update_mask.shape != expected_shape:
+                raise ValueError(
+                    f"update_mask must have shape {expected_shape}, got {tuple(update_mask.shape)}"
+                )
+            update_mask = update_mask.to(device=s.device, dtype=self.precision)
+        elif self.update_prob < 1.0:
             b, _, h, w = s.shape
             update_mask = (torch.rand(b, 1, h, w, device=s.device, dtype=self.precision) + self.update_prob).floor()
         else:
