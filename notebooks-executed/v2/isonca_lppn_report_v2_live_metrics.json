@@ -1,0 +1,57 @@
+{
+  "device": "cpu",
+  "torch": "2.11.0+cpu",
+  "target_sha256": "ad2f253ce249b7da4c90aec51476d699f13f013ec2be6234e9e0e0a4cd5ed410",
+  "probe_seeds": [
+    2400,
+    2401,
+    2402
+  ],
+  "mask_seed": 2501,
+  "decoder_rows": [
+    {
+      "decoder": "interpolated_only",
+      "mean_relative_l2": 1.4235758101222017e-07,
+      "max_relative_l2": 1.5594446267641615e-07,
+      "permutation_max": null
+    },
+    {
+      "decoder": "cartesian_coords",
+      "mean_relative_l2": 0.5693500816822052,
+      "max_relative_l2": 0.6535888314247131,
+      "permutation_max": null
+    },
+    {
+      "decoder": "isotropic_neighbors",
+      "mean_relative_l2": 7.456895853389748e-08,
+      "max_relative_l2": 7.736559837212553e-08,
+      "permutation_max": 5.58297514885453e-08
+    },
+    {
+      "decoder": "isotropic_neighbors_radial",
+      "mean_relative_l2": 7.997720482914398e-08,
+      "max_relative_l2": 8.299871723238539e-08,
+      "permutation_max": 5.588645990428631e-08
+    }
+  ],
+  "path_state_relative_l2": 2.4856712244059054e-08,
+  "path_change_max": 0.07033231854438782,
+  "path_rows": [
+    {
+      "decoder": "interpolated_only",
+      "render_relative_l2": 1.2730866671972763e-07
+    },
+    {
+      "decoder": "cartesian_coords",
+      "render_relative_l2": 0.6520966291427612
+    },
+    {
+      "decoder": "isotropic_neighbors",
+      "render_relative_l2": 6.113462092116606e-08
+    },
+    {
+      "decoder": "isotropic_neighbors_radial",
+      "render_relative_l2": 6.916059902550842e-08
+    }
+  ]
+}
