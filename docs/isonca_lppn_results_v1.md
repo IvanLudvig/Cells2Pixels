@@ -132,8 +132,8 @@ still visually blurry and is not materially sharper than `interpolated_only`.
 Executed notebooks:
 
 ```text
-notebooks-executed/weights/isonca_lizard_lppn_no_coords/isonca_lizard_lppn_gradnorm.ipynb
-notebooks-executed/weights/isonca_lizard_lppn_coords/isonca_isotropic_lppn_experiments.ipynb
-notebooks-executed/weights/isonca_lizard_lppn_isotropic_neighbors/isonca_isotropic_lppn_experiments.ipynb
-notebooks-executed/weights/isonca_lizard_isotropic_neighbors_radial/isonca_isotropic_lppn_experiments.ipynb
+notebooks-executed/v1/isonca_lizard_lppn_no_coords/isonca_lizard_lppn_gradnorm.ipynb
+notebooks-executed/v1/isonca_lizard_lppn_coords/isonca_isotropic_lppn_experiments.ipynb
+notebooks-executed/v1/isonca_lizard_lppn_isotropic_neighbors/isonca_isotropic_lppn_experiments.ipynb
+notebooks-executed/v1/isonca_lizard_isotropic_neighbors_radial/isonca_isotropic_lppn_experiments.ipynb
 ```
