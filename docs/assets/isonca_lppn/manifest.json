@@ -24,6 +24,10 @@
     "frozen_state_decoder.png": {
       "source": "notebooks-executed/v17a/v17a_frozen_v14a_d4_readout_bridge_artifacts.tar.gz::v17a_frozen_v14a_d4_readout_bridge/v14a_d4_readout_bridge.png",
       "sha256": "66326a4b1b14cbcdedb4140faa1206acad70bfa70a287283e0383b921970e103"
+    },
+    "conditional_growth.png": {
+      "source": "notebooks-executed/v34b/v34b_fixed_core_stochastic_seed_system_audit_artifacts.tar.gz::v34b_fixed_core_stochastic_seed_system_audit/v34b_fixed_core_panel.png",
+      "sha256": "0f712720403d0a0d1a16b4228f9bc142e640c8d45108a34edca94734796f49fa"
     }
   },
   "derivation": "evidence.json is a field-limited extract of original decoder comparison and V17a/V17b3/V49 metrics; PNG bytes are unchanged.",
@@ -31,6 +35,7 @@
     "v14c_metrics.json": "724f367f99fb0807ab8939376bd4972533b6b48b1059c2b77c7aef4ef4a8ceeb",
     "v17a_metrics.json": "524eb3a2728c39da174dedba1a1f657669705d367269ec591ff8f4e1176f4b64",
     "v17b3_metrics.json": "3e06a969d38f64ac3e2056b9ce355c6c37b95d5e0429f271813834efff1df2c2",
-    "v49_metrics.json": "1bf4a8530bf0bdbf08b7cf3e5d0e630c75620a6d1b3faf4662432e8d15839df2"
+    "v49_metrics.json": "1bf4a8530bf0bdbf08b7cf3e5d0e630c75620a6d1b3faf4662432e8d15839df2",
+    "v34b_metrics.json": "1ab4b7f358f2835ae04437b2bbd51a45afffef686dc55581b744cf8587ba54ce"
   }
 }

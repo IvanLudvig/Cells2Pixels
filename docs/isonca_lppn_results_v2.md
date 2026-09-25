@@ -108,23 +108,42 @@ The scalar IsoNCA with matching capacity remained nearly radial at the audited
 5,000-update checkpoint of an interrupted run. This table's symmetry errors
 are maximum absolute pixel errors, unlike the earlier relative L2 values.
 
-![Isotropic port: target and eight independent age-128 renders, aligned for display](assets/isonca_lppn/isotropic_port.png)
+The first panel shows lizards **grown by the learned isotropic rule**; their
+head, tail, and fine details are often malformed. Every generated row in the
+second panel instead renders **states grown by the directional reference**.
+Its rows compare the original Cartesian readout, an interpolated-state readout,
+and the symmetric D4 readout on those same directional states. Their sharpness
+tests readout capacity, not isotropic growth.
 
-![D4 readout on frozen directional NCA states](assets/isonca_lppn/frozen_state_decoder.png)
+![Learned isotropic growth: target and eight independent age-128 renders, aligned for display](assets/isonca_lppn/isotropic_port.png)
+
+![Three readouts on frozen states grown by the directional NCA](assets/isonca_lppn/frozen_state_decoder.png)
 
 ## Orientation experiments and final control
 
 Further controls tested consistent head/tail labels, states carrying vector
 or discrete orientation information, longer-range perception, and symmetry
-constraints on the sharp directional model. None combined sharpness on fresh
-histories with the required growth symmetry. Supplying orientation cues to
-steer the **frozen directional growth rule** did produce sharp conditional
-outputs that passed sampled paired-mask D4 checks. Those cues could be inferred
-locally from a random seed marker, but this does not establish a learned
+constraints on the sharp directional model. None of the newly trained
+isotropic growth rules produced sharp lizards on fresh histories while passing
+the tested growth-symmetry checks.
+
+A separate, stronger **conditional** result used a random scalar marker around
+a fixed live seed cell to choose one of eight quarter-turn/reflection poses.
+Here “conditional” means the marker supplies the orientation for the output.
+A cue propagated that choice locally and steered the **frozen directional growth
+rule**; the symmetric readout then rendered the corresponding lizard. Across
+16 fresh marker and update-mask histories, mean aligned image quality was
+`0.017290` and the largest paired-mask D4 image error was `0.001221` maximum
+absolute pixel difference. The known even-grid registration shift was applied
+when scoring image quality. The panel calls the chosen pose a “gauge.” Removing
+the marker spoiled the result, so the cue was functional. This is sharp,
+marker-guided growth using an existing directional rule, not a newly learned
 Laplacian/gradient-norm IsoNCA.
 
-The final control tested whether an asymmetric random marker in the seed could
-guide the isotropic rule toward an elongated lizard. It compared gradients
+![Sharp marker-guided outputs: target and render at several quarter-turn/reflection poses, all using the frozen directional growth rule](assets/isonca_lppn/conditional_growth.png)
+
+The final control asked whether a similar marker could instead guide a
+**newly trained isotropic rule** toward an elongated lizard. It compared gradients
 through all 64 growth steps with gradients through only the last 16, plus a
 matched living seed without the marker. Each arm received 150 training updates
 on one fixed history. On eight fresh histories, age-64
@@ -137,15 +156,17 @@ This one marker, initialization, and training
 history did not show useful marker dependence. These fixed-pose losses are
 not on the composite-quality scale above.
 
-![Target and selected fixed-history marker controls](assets/isonca_lppn/marker_control.png)
+![Failed isotropic marker trial: the three trained arms produced blobs rather than lizards](assets/isonca_lppn/marker_control.png)
 
 ## Conclusion and limits
 
-The original question separates into two results. A coordinate-free LPPN can
+The evidence separates into three findings. A coordinate-free LPPN can
 be trained jointly with a `lap_gradnorm` IsoNCA while preserving tested
 decoder-only D4 symmetry. A sharp D4 readout is feasible on frozen states
-from a directional NCA. None of the tested learned isotropic growth routes
-produced a sharp, robust, non-radial lizard.
+from a directional NCA. A random marker can steer that frozen directional
+rule toward a sharp lizard in one of eight grid-symmetric poses. None of the
+tested newly learned isotropic growth routes produced a sharp, robust,
+non-radial lizard.
 
 The early decoder comparisons used one training seed per arm and one
 asymmetric decoder probe. Later fresh-history counts are stated above. These
@@ -164,4 +185,5 @@ rollouts.
 | Isotropic port | [Notebook](../notebooks-executed/v2/isotropic_port.ipynb) |
 | Frozen directional-state readout | [Notebook](../notebooks-executed/v2/frozen_state_decoder.ipynb) |
 | Scalar-growth audit | [Notebook](../notebooks-executed/v2/scalar_growth.ipynb) |
+| Sharp marker-guided directional control | [Notebook](../notebooks-executed/v2/conditional_growth.ipynb) |
 | Marker control | [Notebook](../notebooks-executed/v2/marker_control.ipynb) |
